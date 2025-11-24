@@ -7,13 +7,34 @@ https://www.luiztools.com.br/post/implementando-refresh-token-em-node-js/
 (PUT - PATH) -> https://www.youtube.com/watch?v=tp498vX_OR4
 
 ## Criar conta user normal
-- Chega um DTO request register common user
-- Utilizamos o validation do beans no dto para validação, antes de passar para o service
-- Se estiver tudo certo, será enviado para service e acontecerá a criação do novo usuário.
-- Se for criado, enviaremos um e-mail para o novo usuário aprovar e confirmar seu email.
-- Se o usuário confirmar seu e-mail em 1 dia, ele poderá acessar o sistema.
-- Se não validar seu e-mail, aquele registro é invalidado e apagado do banco de dados.
-- Se tudo for validado, a conta será criada, o status passará para ativo e o user terá acesso ao sistema.
+
+- **Request:** Chega no DTO com as validation beans.
+
+1. Verifica se e-mail já existe no postgres.
+2. Encripta senha com BCryptPasswordEncoder.
+3. Salva usuário com status *PENDING*.
+
+- **Redis:**
+
+1. Gera token JWT de acesso e refresh.
+2. Salva no Redis os tokens.
+3. Response o usuário com os tokens e mensagem de verificação de email.
+
+- **Kafka:**
+
+1. É enviado uma mensagem/e-mail ao usuário, para ele validar seu e-mail.
+
+- **Cron users inativos:**
+
+1. Job para deletar usuários com status de Pending, criados a mais de 24h.
+
+- **Confirmação criação de conta:**
+
+1. Usuário clica no link do e-mail e é redirecionado para a página principal da aplicação.
+
+... processos ...
+
+?. Depois das validações de tokens no redis e comprovação de existência do usuário no db (não foi deletado pelo job), o status da conta é atualizado para *active* utilizando o MapStruct.
 
 ## Criar conta user admin
 (Apenas o admin pode criar ou dar permissões a um usuário normal)
