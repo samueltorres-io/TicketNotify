@@ -35,3 +35,8 @@ Stack utilizada nesse projeto
 ### Swagger
 
     - Documentação da API
+
+
+### Docker
+
+Ir3mos rodar em docker, com containers separados para rabbitmq, api, database e redis
