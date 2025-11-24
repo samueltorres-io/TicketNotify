@@ -39,4 +39,8 @@ Stack utilizada nesse projeto
 
 ### Docker
 
-Ir3mos rodar em docker, com containers separados para rabbitmq, api, database e redis
+Iremos rodar em docker, com containers separados para rabbitmq, api, database, redis, grafana+loki para logs e métricas dos containers.
+
+### Logs
+
+Iremos utilizar a grafana para centralizar nossos logs do sistema, além de utilizar looking com prometeus para permitir a comunicação e envio de dados para a grafana. Para as métricas dos containers, será utilizado o mesmo sistema.
