@@ -36,10 +36,25 @@ https://www.luiztools.com.br/post/implementando-refresh-token-em-node-js/
 
 ?. Depois das validações de tokens no redis e comprovação de existência do usuário no db (não foi deletado pelo job), o status da conta é atualizado para *active* utilizando o MapStruct.
 
+---
+
 ## Criar conta user admin
-(Apenas o admin pode criar ou dar permissões a um usuário normal)
-- Um usuário admin pode ser criado de duas formas, diretamente no sistema, sem necessidade de passar pelo processo do registro de user normal.
-- Ou poderá ser um usuário comum, que receberá a permissão de admin.
+
+*Mesmo fluxo para outros tipos de usuários e diferentes roles! User admin apenas para exemplo*
+
+### Fluxo 1
+
+O primeiro admin é criado direto no db e pode criar novas contas admins sem passar pelo processo de validação de email. (Quase nunca utilizado)
+
+### Fluxo 2
+
+1. Admin logado chama endpoint (PATCH /users/{id}/promote) para promover um usuário a admin.
+2. Backend verifica se quem chamou tem permissão de admin.
+3. Verifica se o usuário a ser promovido existe e se não está revogado.
+4. Verifica se o usuário já não é admin e se for, volta warn.
+5. Atualiza a tabela de relacionamento user_roles, adicionando a Role admin ao usuário.
+
+---
 
 ## Login
 - A requisição chega no backend.
