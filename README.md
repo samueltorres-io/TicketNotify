@@ -22,7 +22,7 @@ Stack utilizada nesse projeto
 
 ### Bean Validation (Jakarta)
 
-### Kafka
+### Kafka --- !!!RABBITMQ!!!
 
     - Produtor: Quando a compra é salva no banco, será enviado um evento *TicketPurchasedEvent* para o tópico *ticket-confirmation*.
 
