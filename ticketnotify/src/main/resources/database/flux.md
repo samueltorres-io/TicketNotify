@@ -106,8 +106,18 @@ O primeiro admin é criado direto no db e pode criar novas contas admins sem pas
 ---
 
 ## Editar um evento
-(Se for data/hora ou localização, envia um email com a modificação para todos que compraram ingressos para esse evento)
-- Recebe a request e passa para o mapper.
+
+- **Request:** PATCH /events/{id} com os campos parciais.
+
+- **Service**
+
+    1. Recupera evento antigo do banco (oldEvent).
+    2. Usa MapStruct para mesclar DTO com Entity.
+    3. Detecta mudanças críticas driff.
+
+- **Persistencia:** Salva com @DynamicUpdate
+
+- Se notifyUser == true, publica mensagem. Consumer pega os e-mails na tabela de tickets referentes a aquele evento e dispara aviso.
 
 ## Excluir um evento
 (Deve ser enviado um e-mail informando o cancelamento do evento e uma mensagem para o user solicitar o rembolso do valor)
