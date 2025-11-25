@@ -77,6 +77,8 @@ O primeiro admin é criado direto no db e pode criar novas contas admins sem pas
 
 - Retorna Access Token no Body e Refresh Token (HttpOnly Cookie).
 
+---
+
 ## Registrar um novo evento
 - Recebe a requisição de registrar o evento.
 - Valida os dados da requisição no dto com validations beans.
@@ -86,6 +88,22 @@ O primeiro admin é criado direto no db e pode criar novas contas admins sem pas
 - Se tiver, tenta criar o novo evento.
 - Se der erro, volta erro ao usuário.
 - Se der tudo certo, retorna o objeto recem criado de evento e sucesso.
+
+- **Request:** DTO com dados do evento.
+- **Validações**
+
+    1. Verifica as permissões do usuário.
+    2. Bean Validation (Data futura, preço positivo, etc...)
+
+- **Segurança:** Verifica contexto SecurityContextHolder se user tem Role ORGANIZER ou ADMIN.
+
+- **Service**
+
+    1. Salva evento no Postgres
+
+- **Response:** 201 Created com response do obj evento.
+
+---
 
 ## Editar um evento
 (Se for data/hora ou localização, envia um email com a modificação para todos que compraram ingressos para esse evento)
