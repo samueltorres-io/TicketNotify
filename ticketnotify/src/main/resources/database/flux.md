@@ -140,8 +140,43 @@ Não deleta os dados no banco caso já exista ingressos vendidos, apenas invalid
 
 ## Usuário comprar um ticket
 
-## Usuário pedir rembolso do ticket recem comprado
-(3 dias para desistência)
+- **Request:** POST /events/{id}/buy
+
+- **Service:**
+
+    1. Verifica se Evento está ACTIVE e data é futura.
+    2. **Controle de Concorrência:** Verifica (capacidade - tickets_vendidos) > 0. Utilizando query atômica no db.
+
+- **Pagamento:**
+
+    1. Chama serviço de pagamento (mock + kafka). Se sucesso -> status: paid.
+    2. Se falhar -> Atualiza ticket para payment_failed e decrementa contador de vendidos do evento.
+
+- **RabbitMQ:**
+
+    1. Se paid, gera (NF e E-Ticket) e publica para envio em e-mail. 
+
+---
+
+## Usuário pedir rembolso
+
+- **Request:** POST /tickets/{id}/refund
+
+- **Validação:**
+
+    1. Busca Ticket. Verifique se status é paid.
+    2. Verifica regra de tempo { if (ticket.createdAt.plusDays(3).isAfter(now)) -> OK } se não, erro de prazo expirado.
+
+- **Service:**
+
+    1. Atualiza Ticket para refund_requested / refunded.
+    2. Atualiza contador de vagas do evento devolvendo o ingresso.
+
+- **Kafka:** Da mesma forma da compra, notifica o sistema financeiro.
+
+- **RabbitMQ:** Envia e-mail de confirmação.
+
+---
 
 ## Usuário criar uma nova regra
 
