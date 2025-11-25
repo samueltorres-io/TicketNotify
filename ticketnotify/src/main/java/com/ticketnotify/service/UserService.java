@@ -21,12 +21,10 @@ public class UserService {
     @Transactional
     public User createUser(User user) {
         
-        // 1. Verifica se e-mail já existe no banco de dados
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
         }
 
-        // 2. Encripta a senha com BCryptPasswordEncoder
         String passwordHash = new BCryptPasswordEncoder().encode(user.getPassword());
         if (passwordHash.isEmpty() || passwordHash.isBlank()) {
             throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR, HttpStatus.FAILED_DEPENDENCY);
@@ -34,10 +32,9 @@ public class UserService {
 
         user.setPassword(passwordHash);
 
-        // 3. Salva o usuário
-        userRepository.save(user);
+        User createdUser = userRepository.save(user);
 
-        return user;
+        return createdUser;
 
     };
 
