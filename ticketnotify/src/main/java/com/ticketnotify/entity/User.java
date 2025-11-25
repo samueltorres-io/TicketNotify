@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,6 +41,10 @@ public class User {
     @Column(length = 20)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private UserStatus status = UserStatus.PENDING;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
@@ -54,5 +60,9 @@ public class User {
     @PastOrPresent
     @Column(name = "updated_at", updatable = true)
     private OffsetDateTime updatedAt;
+
+    public enum UserStatus {
+        PENDING, ACTIVE, REVOKED
+    }
 
 }
