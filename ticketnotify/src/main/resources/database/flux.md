@@ -1,10 +1,16 @@
 # Fluxos da aplicação
 
+Explicação básica dos fluxos da aplicação
+
+---
+
 ## Links
 
 https://medium.com/@choubeyayush4/securing-node-js-applications-with-jwt-refresh-tokens-and-redis-80ffbb54285a
 https://www.luiztools.com.br/post/implementando-refresh-token-em-node-js/
 (PUT - PATH) -> https://www.youtube.com/watch?v=tp498vX_OR4
+
+---
 
 ## Criar conta user normal
 
@@ -56,14 +62,20 @@ O primeiro admin é criado direto no db e pode criar novas contas admins sem pas
 
 ---
 
-## Login
-- A requisição chega no backend.
-- Validaremos os dados via valiration beans no DTO da requisição.
-- Verificamos se o usuário existe na aplicação e não está revogado.
-- Verificamos as credenciais.
-- Se tiver algum erro, volta erro ao usuário.
-- Se estiver tudo verto, gera sessão de refresh token e salva no redis para validação e revogação.
-- Volta sucesso ao usuário se tudo der certo.
+## Login (Auth JWT + Redis)
+
+- **Request:** Chega email e senha.
+
+1. Busca user no Postgres
+2. Bate hash da senha (BCrypt)
+3. Gera Access Token (JWT, 15m).
+4. Gera Refresh Token (1d).
+
+- **Redis**
+
+1. Salva o refresh no Redis: Key=auth:{email}:{uuid}, Value=valid, TTL=7d
+
+- Retorna Access Token no Body e Refresh Token (HttpOnly Cookie).
 
 ## Registrar um novo evento
 - Recebe a requisição de registrar o evento.
