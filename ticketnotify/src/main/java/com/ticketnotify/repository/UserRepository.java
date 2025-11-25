@@ -8,4 +8,6 @@ import com.ticketnotify.entity.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
+    boolean existsByEmail(String email);
+
 }
