@@ -119,16 +119,24 @@ O primeiro admin é criado direto no db e pode criar novas contas admins sem pas
 
 - Se notifyUser == true, publica mensagem. Consumer pega os e-mails na tabela de tickets referentes a aquele evento e dispara aviso.
 
+---
+
 ## Excluir um evento
-(Deve ser enviado um e-mail informando o cancelamento do evento e uma mensagem para o user solicitar o rembolso do valor)
-- Passa pelo redis para validar credenciais.
-- Requesição chega no backend.
-- Verificamos se o evento existe e se não existir, gera erro.
-- Verificamos se o usuário existe, se está válido e se ele tem a permissão necessária para excluir um evento (o user que criou ou adm podem apagar um evento), caso seja inválido, retorna erro.
-- Tenta apagar o evento e se não conseguir, gera erro.
-- Se conseguir, tenta pegar todos so usuários que tinham um ingresso referente a aquele evento.
-- Em paralelo, volta sucesso ao usuário.
-- Tenta enviar um email via kafka para todos os usuário, informando o cancelamento e passando link para suporte e rembolso. 
+
+Não deleta os dados no banco caso já exista ingressos vendidos, apenas invalida.
+
+- **Fluxo:**
+
+    1. Verifica as permissões do usuário.
+    2. Muda status do evento para canceled.
+    3. Muda status de todos os tickets vinculados para canceled_by_event.
+
+- **RabbitMQ:** Dispara evento
+
+    1. Consumer envia e-mail de aviso.
+    2. Consumer aciona módulo de reembolso para estornar pagamentos.
+
+---
 
 ## Usuário comprar um ticket
 
